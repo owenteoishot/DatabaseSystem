@@ -1,5 +1,5 @@
-const roleModel = require('../models/roleModel');
-const userRoleModel = require('../models/userRoleModel');
+const roleModel = require('../../models/roleModel');
+const userRoleModel = require('../../models/userRoleModel');
 
 exports.assignRole = async (req, res) => {
   const { userId, roleName } = req.body;

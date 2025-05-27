@@ -1,5 +1,4 @@
 const express = require('express');
-const app = express();
 const cors = require('cors');
 require('dotenv').config();
 
@@ -12,8 +11,17 @@ const flagRoutes = require('./routes/flagRoutes');
 const moderationRoutes = require('./routes/moderationRoutes');
 const reputationRoutes = require('./routes/reputationRoutes');
 
-app.use(cors());
+const app = express();
+
+// Enable CORS for React dev server
+app.use(cors({
+  origin: 'http://localhost:5173', // React frontend port
+  credentials: true
+}));
+
 app.use(express.json());
+
+// Serve static files only if you still use /public
 app.use(express.static('public'));
 
 // Mount API routes
