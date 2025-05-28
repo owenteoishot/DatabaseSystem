@@ -24,29 +24,31 @@ exports.register = async (req, res) => {
 };
 
 // Login User
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await userModel.findUserByEmail(email);
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+const user = await userModel.findUserByEmail(email);
+if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const match = await bcrypt.compare(password, user.password_hash);
-    if (!match) return res.status(400).json({ message: 'Invalid credentials' });
+const match = await bcrypt.compare(password, user.password_hash);
+if (!match) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign(
-      { user_id: user.user_id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+// Get user's role
+const roleResult = await db.query(
+  `SELECT r.role_name FROM user_roles ur
+   JOIN roles r ON ur.role_id = r.role_id
+   WHERE ur.user_id = $1 LIMIT 1`,
+  [user.user_id]
+);
+const role = roleResult.rows[0]?.role_name || 'user';
 
-    await sessionModel.createSession(user.user_id, token, req.ip, req.headers['user-agent'], new Date(Date.now() + 3600000));
+// Generate token
+const token = jwt.sign(
+  { user_id: user.user_id, username: user.username },
+  process.env.JWT_SECRET,
+  { expiresIn: '1h' }
+);
 
-    res.json({ message: 'Login successful', token });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Login failed' });
-  }
-};
+// Respond with token AND role
+res.json({ message: 'Login successful', token, role });
+
 
 // Logout
 exports.logout = async (req, res) => {
