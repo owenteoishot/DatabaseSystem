@@ -8,7 +8,14 @@ function Navbar() {
     <nav className="navbar">
       <Link to="/dashboard">Dashboard</Link>
       <Link to="/profile">Profile</Link>
-      {isAdmin() && <Link to="/admin">Admin Panel</Link>}
+      <Link to="/forum">Forum</Link>
+      {isAdmin() && (
+        <>
+          <Link to="/admin">Admin</Link>
+          <Link to="/admin/moderation">Moderation</Link>
+          <Link to="/admin/roles">Role Management</Link>
+        </>
+      )}
       <button onClick={logout}>Logout</button>
     </nav>
   );

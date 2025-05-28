@@ -1,29 +1,55 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
+import ForumPage from './pages/ForumPage';
+import PostCreatePage from './pages/PostCreatePage';
+
 import AdminPage from './pages/admin/AdminPage';
 import ModerationPage from './pages/admin/ModerationPage';
+import RoleAssignmentPage from './pages/admin/RoleAssignmentPage';
 
+import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
-import Navbar from './components/Navbar';
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
+        {/* Public */}
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
-        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        {/* User */}
+        <Route
+          path="/dashboard"
+          element={<ProtectedRoute><DashboardPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/profile"
+          element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
+        />
+        <Route path="/forum" element={<ProtectedRoute><ForumPage /></ProtectedRoute>} />
+<Route path="/forum/create" element={<ProtectedRoute><PostCreatePage /></ProtectedRoute>} />
 
-        <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
-        <Route path="/admin/moderation" element={<AdminRoute><ModerationPage /></AdminRoute>} />
+        {/* Admin */}
+        <Route
+          path="/admin"
+          element={<AdminRoute><AdminPage /></AdminRoute>}
+        />
+        <Route
+          path="/admin/moderation"
+          element={<AdminRoute><ModerationPage /></AdminRoute>}
+        />
+        <Route
+          path="/admin/roles"
+          element={<AdminRoute><RoleAssignmentPage /></AdminRoute>}
+        />
       </Routes>
     </Router>
   );
