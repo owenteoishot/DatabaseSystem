@@ -29,6 +29,47 @@ function ForumPage() {
     fetchPosts(filterId);
   };
 
+  const handleReport = (postId) => {
+    const reasons = [
+      'Spam',
+      'Harassment',
+      'Inappropriate Content',
+      'False Information',
+      'Other'
+    ];
+
+    const choice = prompt(
+      `Select a reason:\n${reasons.map((r, i) => `${i + 1}. ${r}`).join('\n')}`
+    );
+    const index = parseInt(choice) - 1;
+
+    if (isNaN(index) || index < 0 || index >= reasons.length) {
+      alert('Invalid reason');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+
+    fetch('http://localhost:3000/api/flags', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contentType: 'post',
+        contentId: String(postId),
+        reason: reasons[index]
+      })
+    }).then(res => {
+      if (res.ok) {
+        alert('Report submitted');
+      } else {
+        alert('Failed to submit report');
+      }
+    });
+  };
+
   return (
     <div className="page">
       <h2>Community Forum</h2>
@@ -44,9 +85,7 @@ function ForumPage() {
         <button type="button" onClick={() => {
           setFilterId('');
           fetchPosts();
-        }}>
-          Reset
-        </button>
+        }}>Reset</button>
       </form>
 
       <Link to="/forum/create">
@@ -64,6 +103,8 @@ function ForumPage() {
               <h3>{post.title}</h3>
               <p>{post.content}</p>
               <small>By {post.username} — {new Date(post.created_at).toLocaleString()}</small>
+              <br />
+              <button onClick={() => handleReport(post.post_id)}>Report</button>
             </div>
           ))}
         </div>

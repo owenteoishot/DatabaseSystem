@@ -103,3 +103,21 @@ a {
 textarea {
   resize: vertical;
 }
+
+.page {
+  max-width: 600px;
+  margin: 3rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+button {
+  margin-top: 0.5rem;
+}
+.navbar {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+}

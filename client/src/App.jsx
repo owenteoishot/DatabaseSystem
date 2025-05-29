@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -17,41 +18,28 @@ import AdminRoute from './components/AdminRoute';
 
 function App() {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        {/* Public */}
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
 
-        {/* User */}
-        <Route
-          path="/dashboard"
-          element={<ProtectedRoute><DashboardPage /></ProtectedRoute>}
-        />
-        <Route
-          path="/profile"
-          element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}
-        />
-        <Route path="/forum" element={<ProtectedRoute><ForumPage /></ProtectedRoute>} />
-<Route path="/forum/create" element={<ProtectedRoute><PostCreatePage /></ProtectedRoute>} />
+          {/* User */}
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/forum" element={<ProtectedRoute><ForumPage /></ProtectedRoute>} />
+          <Route path="/forum/create" element={<ProtectedRoute><PostCreatePage /></ProtectedRoute>} />
 
-        {/* Admin */}
-        <Route
-          path="/admin"
-          element={<AdminRoute><AdminPage /></AdminRoute>}
-        />
-        <Route
-          path="/admin/moderation"
-          element={<AdminRoute><ModerationPage /></AdminRoute>}
-        />
-        <Route
-          path="/admin/roles"
-          element={<AdminRoute><RoleAssignmentPage /></AdminRoute>}
-        />
-      </Routes>
-    </Router>
+          {/* Admin */}
+          <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+          <Route path="/admin/moderation" element={<AdminRoute><ModerationPage /></AdminRoute>} />
+          <Route path="/admin/roles" element={<AdminRoute><RoleAssignmentPage /></AdminRoute>} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

@@ -1,8 +1,12 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import { isLoggedIn, isAdmin, logout } from '../utils/auth';
 
 function Navbar() {
-  if (!isLoggedIn()) return null;
+  const { authenticated } = useContext(AuthContext);
+
+  if (!authenticated || !isLoggedIn()) return null;
 
   return (
     <nav className="navbar">
