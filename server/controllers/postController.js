@@ -4,6 +4,11 @@ exports.getPosts = async (req, res) => {
   const { userId } = req.query;
 
   try {
+    // If userId is present, validate format as UUID
+    if (userId && !/^[0-9a-fA-F-]{36}$/.test(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID format' });
+    }
+
     const posts = userId
       ? await postModel.getPostsByUser(userId)
       : await postModel.getAllPosts();
@@ -14,6 +19,7 @@ exports.getPosts = async (req, res) => {
     res.status(500).json({ message: 'Failed to load posts' });
   }
 };
+
 
 
 exports.createPost = async (req, res) => {

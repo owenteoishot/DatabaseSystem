@@ -1,26 +1,27 @@
-import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
 import { isLoggedIn, isAdmin, logout } from '../utils/auth';
 
 function Navbar() {
-  const { authenticated } = useContext(AuthContext);
-
-  if (!authenticated || !isLoggedIn()) return null;
+  if (!isLoggedIn()) return null;
 
   return (
     <nav className="navbar">
-      <Link to="/dashboard">Dashboard</Link>
-      <Link to="/profile">Profile</Link>
-      <Link to="/forum">Forum</Link>
-      {isAdmin() && (
-        <>
-          <Link to="/admin">Admin</Link>
-          <Link to="/admin/moderation">Moderation</Link>
-          <Link to="/admin/roles">Role Management</Link>
-        </>
-      )}
-      <button onClick={logout}>Logout</button>
+      <div className="nav-left">
+        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/profile">Profile</Link>
+        <Link to="/forum">Forum</Link>
+
+        {isAdmin() && (
+          <>
+            <Link to="/admin">Admin</Link>
+            <Link to="/admin/moderation">Moderation</Link>
+          </>
+        )}
+      </div>
+
+      <div className="nav-right">
+        <button onClick={logout}>Logout</button>
+      </div>
     </nav>
   );
 }

@@ -52,3 +52,28 @@ exports.resolveFlag = async (req, res) => {
     res.status(500).json({ message: 'Failed to update flag status' });
   }
 };
+
+exports.getPostFlags = async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        f.flag_id,
+        f.status,
+        f.created_at,
+        p.post_id,
+        p.title,
+        p.content,
+        u.username AS author
+      FROM content_flags f
+      JOIN posts p ON f.content_id = p.post_id::TEXT
+      JOIN users u ON p.author_id = u.user_id
+      WHERE f.content_type = 'post'
+      ORDER BY f.created_at DESC
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Fetch flags failed:', err);
+    res.status(500).json({ message: 'Could not fetch flags' });
+  }
+};

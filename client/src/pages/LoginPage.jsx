@@ -8,20 +8,33 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    const data = await loginUser(email, password);
+  e.preventDefault();
 
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.role || "user");
+  const res = await fetch('http://localhost:3000/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
 
-      // If your backend returns role info, store it too
-      // localStorage.setItem('role', data.role || 'user');
-      navigate("/dashboard");
+  if (res.ok) {
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('role', data.user.role);
+
+    if (data.user.role === 'admin') {
+      navigate('/admin');
+    } else if (data.user.role === 'user') {
+      navigate('/dashboard');}
+      else if (data.user.role === 'moderator') {
+      navigate('/dashboard');
     } else {
-      alert(data.message || "Login failed");
+      alert('Unauthorized role');
     }
-  };
+  } else {
+    alert('Invalid credentials');
+  }
+};
+
 
   return (
     <div className="auth-container">

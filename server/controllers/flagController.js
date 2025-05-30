@@ -1,24 +1,31 @@
 const db = require('../models/db');
 
-// 🔁 User reports a post/comment/profile/media
+// Unified: Create a content flag
 exports.flagContent = async (req, res) => {
-  const reporter = req.user.user_id;
-  const { contentType, contentId } = req.body;
+  const { content_type, content_id } = req.body;
+  const reported_by = req.user.user_id;
 
-  const validTypes = ['post', 'comment', 'profile', 'media'];
-  if (!validTypes.includes(contentType)) {
+  if (!content_type || !content_id) {
+    return res.status(400).json({ message: 'Missing flag data' });
+  }
+
+  if (!['post', 'comment', 'profile', 'media'].includes(content_type)) {
     return res.status(400).json({ message: 'Invalid content type' });
   }
 
+  console.log('🚨 Incoming flag report:', { content_type, content_id, reported_by });
+
   try {
-    await db.query(
-      `INSERT INTO content_flags (content_type, content_id, reported_by, status, created_at)
-       VALUES ($1, $2, $3, 'pending', NOW())`,
-      [contentType, contentId, reporter]
+    const result = await db.query(
+      `INSERT INTO content_flags (content_type, content_id, reported_by)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
+      [content_type, content_id, reported_by]
     );
-    res.status(201).json({ message: 'Content flagged for review' });
+
+    res.status(201).json({ message: 'Flag recorded', data: result.rows[0] });
   } catch (err) {
-    console.error('Error flagging content:', err);
-    res.status(500).json({ message: 'Failed to flag content' });
+    console.error('Flag creation error:', err);
+    res.status(500).json({ message: 'Error recording flag' });
   }
 };

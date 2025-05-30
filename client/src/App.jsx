@@ -10,11 +10,13 @@ import PostCreatePage from './pages/PostCreatePage';
 
 import AdminPage from './pages/admin/AdminPage';
 import ModerationPage from './pages/admin/ModerationPage';
-import RoleAssignmentPage from './pages/admin/RoleAssignmentPage';
 
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import ForbiddenPage from './pages/ForbiddenPage';
+import ModerationRoute from './components/ModerationRoute';
+
 
 function App() {
   return (
@@ -22,21 +24,23 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-          {/* Public */}
+          {/* Public Routes */}
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
 
-          {/* User */}
+          {/* User Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/forum" element={<ProtectedRoute><ForumPage /></ProtectedRoute>} />
           <Route path="/forum/create" element={<ProtectedRoute><PostCreatePage /></ProtectedRoute>} />
 
-          {/* Admin */}
+          {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
           <Route path="/admin/moderation" element={<AdminRoute><ModerationPage /></AdminRoute>} />
-          <Route path="/admin/roles" element={<AdminRoute><RoleAssignmentPage /></AdminRoute>} />
+          <Route path="/403" element={<ForbiddenPage />} />
+          <Route path="/admin/moderation" element={<ModerationRoute><ModerationPage /></ModerationRoute>} />
+          
         </Routes>
       </Router>
     </AuthProvider>

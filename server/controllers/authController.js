@@ -10,47 +10,52 @@ const db = require('../models/db');
 // Register User
 exports.register = async (req, res) => {
   const { username, email, password } = req.body;
-  
+
   try {
-    // Check if email exists
-    const existing = await userModel.findUserByEmail(email);
-    if (existing) {
-      return res.status(400).json({ message: 'Email already in use' });
-    }
+    const existing = await userModel.findByEmail(email);
+    if (existing) return res.status(400).json({ message: 'Email already in use' });
 
-    // Hash password and create user
-    const hash = await bcrypt.hash(password, 10);
-    const user = await userModel.createUser(username, email, hash);
+    const hashed = await bcrypt.hash(password, 10);
+    const newUser = await userModel.createUser(username, email, hashed);
 
-    res.status(201).json({ 
-      message: 'User registered successfully',
-      user: {
-        id: user.user_id,
-        username: user.username,
-        email: user.email
-      }
-    });
+    // Assign default 'user' role
+    const roleIdForUser = 3;
+    await db.query(
+      `INSERT INTO user_roles (user_id, role_id) VALUES ($1, $2)`,
+      [newUser.user_id, roleIdForUser]
+    );
 
+    res.status(201).json({ message: 'User registered successfully', user: newUser });
   } catch (err) {
     console.error('Registration error:', err);
-    res.status(500).json({ message: 'Registration failed', error: err.message });
+    res.status(500).json({ message: 'Registration failed' });
   }
 };
+
 
 // Login User
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+  console.log('🔐 Attempting login for:', email);
 
   try {
     // Find user by email
-    const user = await userModel.findUserByEmail(email);
+    const user = await userModel.findByEmail(email);
     if (!user) {
+      console.log('❌ User not found');
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+    
+    console.log('✅ User found:', user.email);
+    console.log('Hash in DB:', user.password_hash);
+    console.log('Entered password:', password);
 
     // Verify password
     const isMatch = await bcrypt.compare(password, user.password_hash);
+    console.log('Password match?', isMatch);
+    
     if (!isMatch) {
+      console.log('❌ Password mismatch');
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
@@ -85,6 +90,8 @@ exports.login = async (req, res) => {
       new Date(Date.now() + 3600000) // 1 hour expiration
     );
 
+    console.log('✅ Login successful for:', user.email, 'Role:', role);
+
     // Send response
     res.json({
       message: 'Login successful',
@@ -98,7 +105,7 @@ exports.login = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Login error:', err);
+    console.error('💥 Login error:', err);
     res.status(500).json({ message: 'Login failed', error: err.message });
   }
 };
@@ -125,7 +132,7 @@ exports.requestPasswordReset = async (req, res) => {
   const { email } = req.body;
 
   try {
-    const user = await userModel.findUserByEmail(email);
+const user = await userModel.findByEmail(email);
     if (!user) {
       return res.status(404).json({ message: 'Email not found' });
     }

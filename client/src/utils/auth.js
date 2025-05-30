@@ -1,13 +1,17 @@
-export const getToken = () => localStorage.getItem('token');
+export function isLoggedIn() {
+  return !!localStorage.getItem('token');
+}
 
-export const getRole = () => localStorage.getItem('role') || 'user';
+export function getUserRole() {
+  return localStorage.getItem('role');
+}
 
-export const isAdmin = () => getRole() === 'admin';
+export function isAdmin() {
+  return getUserRole() === 'admin';
+}
 
-export const isLoggedIn = () => !!getToken();
-
-export const logout = () => {
+export function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('role');
   window.location.href = '/login';
-};
+}

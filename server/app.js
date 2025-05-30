@@ -10,6 +10,8 @@ const commentRoutes = require('./routes/commentRoutes');
 const flagRoutes = require('./routes/flagRoutes');
 const moderationRoutes = require('./routes/moderationRoutes');
 const reputationRoutes = require('./routes/reputationRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+
 
 const app = express();
 
@@ -33,5 +35,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/flags', flagRoutes);
 app.use('/api/moderation', moderationRoutes);
 app.use('/api/reputation', reputationRoutes);
+app.use('/api/admin', adminRoutes);
+
 
 module.exports = app;
