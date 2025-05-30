@@ -10,6 +10,10 @@ export function isAdmin() {
   return getUserRole() === 'admin';
 }
 
+export function isMod() {
+  return getUserRole() === 'moderator';
+}
+
 export function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('role');
